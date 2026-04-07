@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // Importación de rutas
 const usuarioRoute = require("./routes/usuario.route");
-const productoRoute = require("./routes/producto.route");
+//const productoRoute = require("./routes/producto.route");
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
