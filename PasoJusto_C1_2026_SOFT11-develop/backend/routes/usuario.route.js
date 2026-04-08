@@ -5,14 +5,14 @@ const Usuario = require("../models/usuario.model");
 // Rutas
 // Post: Crear / enviar un nuevo dato a la BD
 router.post("/", async (req, res) => {
-    const { nombre, correo} = req.body;
+    const { nombre, correo, puntosDisponibles, puntosCanjeados, puntosTotales} = req.body;
 
-    if (!nombre || !correo) {
+    if (!nombre || !correo || !puntosDisponibles || !puntosCanjeados || !puntosTotales) {
         return res.status(400).json({ mensajeError: "Todos los datos son obligatorios." });
     }
 
     try {
-        const nuevoUsuario = new Usuario({ nombre, correo});
+        const nuevoUsuario = new Usuario({ nombre, correo, puntosDisponibles, puntosCanjeados, puntosTotales});
         await nuevoUsuario.save();
         res.status(201).json(nuevoUsuario);
     } catch (error) {
@@ -20,47 +20,32 @@ router.post("/", async (req, res) => {
     }
 });
 
+/* Probar con Thunder Client
+{
+   "nombre": "Roberto",
+   "correo": "roberto@test.com",
+   "puntosDisponibles": "20",
+   "puntosCanjeados": "0",
+   "puntosTotales": "0"
+} */
 
-// GET: Solicitar los datos de los empleados a la BD
 
-router.get("/", async (req, res) => {
+// GET: Solicitar los datos de los usuarios a la BD
+
+router.get("/:correo", async (req, res) => {
     try {
-        const usuarios = await Usuario.find({correo: valor});
+        const { correo } = req.params;
+
+        const usuarios = await Usuario.findOne({ correo });
+
+        if (!usuarios) {
+            return res.status(404).json({ mensajeError: "Usuario no encontrado" });
+        }
+
         res.json(usuarios);
+
     } catch (error) {
         res.status(500).json({ error: error.message });
-    }
-});
-
-// PUT
-router.put("/agregar-certificacion", async (req, res) => {
-    const { correo, certificacionId } = req.body;
-
-    if (!correo || !certificacionId) {
-        return res.status(400).json({ mensajeError: "Correo y ID de la certificacion son obligatorios." });
-    }
-
-    try {
-        // Verificar que la certificacion existe.
-        const certificacion = await Certificacion.findById(certificacionId);
-        if (!certificacion) {
-            return res.status(404).json({ Error: "Certificacion no encontrada." })
-        }
-
-        // Buscar el usuario y agregar la certificacion
-        const empleado = await Empleado.findOne({ correo });
-        if (!empleado) {
-            return res.status(404).json({ Error: "Usuario no encontrado." })
-        }
-        if (!empleado.certificaciones.includes(certificacionId)) {
-            empleado.certificaciones.push(certificacionId);
-            await empleado.save();
-        }
-        res.status(200).json({ msj: "Certificacion agregada al empleado ", empleado })
-
-
-    } catch (error) {
-        res.status(400).json({ mensajeError: error.message });
     }
 });
 

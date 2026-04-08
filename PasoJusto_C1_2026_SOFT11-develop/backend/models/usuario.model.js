@@ -13,6 +13,18 @@ const schemaUsuario = new mongoose.Schema({
         require: true,
         unique: true
     },
+    puntosDisponibles: {
+        type: Number,
+        required: true
+    },
+    puntosCanjeados: {
+        type: Number,
+        required: true
+    },
+    puntosTotales: {
+        type: Number,
+        required: true
+    }
 });
 
 const Usuario = mongoose.model("Usuario", schemaUsuario);
