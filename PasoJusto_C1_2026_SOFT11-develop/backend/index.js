@@ -9,12 +9,14 @@ const PORT = process.env.PORT || 3000;
 
 // Importación de rutas
 const usuarioRoute = require("./routes/usuario.route");
-//const productoRoute = require("./routes/producto.route");
+const productoRoute = require("./routes/producto.route");
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(cors());
+
+require("node:dns/promises").setServers(["1.1.1.1", "8.8.8.8"]); // Para el error querySrv ECONNREFUSED  
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
